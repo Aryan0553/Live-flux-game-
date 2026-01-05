@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LiveFlux – Motion Playground</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html,body{
+    margin:0;
+    padding:0;
+    background:#050505;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+}
+#info{
+    position:fixed;
+    top:15px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#0ff;
+    background:rgba(0,0,0,0.6);
+    padding:10px 20px;
+    border-radius:20px;
+    font-size:14px;
+    z-index:10;
+}
+canvas{
+    display:block;
+}
+</style>
+</head>
+
+<body>
+
+<div id="info">
+🖱️ Move mouse • 👆 Click to spawn • 📱 Tilt device (mobile)
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+window.addEventListener("resize",()=>{
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+});
+
+let particles = [];
+let gravityX = 0;
+let gravityY = 0.2;
+
+/* ===== PARTICLE ===== */
+class Particle{
+    constructor(x,y){
+        this.x=x;
+        this.y=y;
+        this.vx=(Math.random()-0.5)*6;
+        this.vy=(Math.random()-0.5)*6;
+        this.size=Math.random()*6+3;
+        this.color=`hsl(${Math.random()*360},100%,60%)`;
+    }
+    update(){
+        this.vx += gravityX;
+        this.vy += gravityY;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if(this.x<0||this.x>canvas.width) this.vx*=-0.9;
+        if(this.y<0||this.y>canvas.height) this.vy*=-0.9;
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+        ctx.fillStyle=this.color;
+        ctx.fill();
+    }
+}
+
+/* ===== SPAWN ===== */
+canvas.addEventListener("click",(e)=>{
+    for(let i=0;i<20;i++){
+        particles.push(new Particle(e.clientX,e.clientY));
+    }
+});
+
+/* ===== MOUSE GRAVITY ===== */
+document.addEventListener("mousemove",(e)=>{
+    gravityX=(e.clientX/canvas.width-0.5)*0.2;
+    gravityY=(e.clientY/canvas.height-0.5)*0.2;
+});
+
+/* ===== DEVICE MOTION (MOBILE) ===== */
+window.addEventListener("deviceorientation",(e)=>{
+    gravityX = e.gamma/100;
+    gravityY = e.beta/100;
+});
+
+/* ===== ANIMATE ===== */
+function animate(){
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach((p,i)=>{
+        p.update();
+        p.draw();
+        if(particles.length>1000) particles.splice(0,1);
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
