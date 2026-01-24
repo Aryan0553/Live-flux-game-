@@ -1,6 +1,5 @@
 # 🌈 LiveFlux – Motion Playground
 
-
 LiveFlux is an interactive particle simulation built with **HTML5 Canvas** and **Vanilla JavaScript**. It creates a visually engaging motion playground where particles react dynamically to mouse movement, clicks, and mobile device orientation.
 
 ---
