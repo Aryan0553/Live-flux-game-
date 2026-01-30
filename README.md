@@ -13,7 +13,6 @@ LiveFlux is an interactive particle simulation built with **HTML5 Canvas** and *
 - 🌊 Smooth trailing animation effect
 - ⚡ Real-time physics-based motion
 
-
 ---
 
 ## 🛠️ Tech Stack
